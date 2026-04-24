@@ -1,0 +1,25 @@
+mkdir Task3
+cd Task3
+npm init -y
+npm install express
+npm install --save-dev @types/express
+cat > index.js << 'EOF'
+const express = require('express');
+const app = express();
+const PORT = 8080;
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+EOF
+echo "node_modules/" > .gitignore
+cd ..
+git init
+git add .
+git commit -m "Initial commit: Node.js REST API with health endpoint"
+git remote add origin https://github.com/PunitXd/nodesjs-api.git
+git push -u origin master
