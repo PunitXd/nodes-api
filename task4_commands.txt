@@ -1,0 +1,36 @@
+mkdir Task4
+cp Task3/index.js Task3/package.json Task3/package-lock.json Task4/
+cat > Task4/Dockerfile << 'EOF'
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+EXPOSE 8080
+CMD ["node", "index.js"]
+EOF
+cat > Task4/.dockerignore << 'EOF'
+node_modules
+.git
+.gitignore
+EOF
+cat > Task4/docker-compose.yml << 'EOF'
+version: "3.8"
+
+services:
+  nodejs-api:
+    build: .
+    image: nodejs-api
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+EOF
+cd Task4
+docker build -t nodejs-api .
+docker run -d -p 8080:8080 --name nodejs-api-container nodejs-api
+curl http://localhost:8080/health
+docker stop nodejs-api-container
+docker rm nodejs-api-container
+docker compose up -d
+curl http://localhost:8080/health
+docker compose down
